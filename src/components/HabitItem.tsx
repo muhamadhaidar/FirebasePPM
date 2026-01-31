@@ -15,11 +15,11 @@ const categoryColors: Record<HabitCategory, string> = {
 type Props = {
     habit: Habit;
     isCompleted: boolean;
-    onToggle: () => void;
-    onRemove: () => void;
+    onToggle: (id: string) => void;
+    onRemove: (id: string) => void;
 };
 
-const HabitItem: React.FC<Props> = ({ habit, isCompleted, onToggle, onRemove }) => {
+const HabitItem: React.FC<Props> = React.memo(({ habit, isCompleted, onToggle, onRemove }) => {
     const categoryName = habit.category;
     const categoryColor = categoryColors[habit.category] || COLORS.mediumGray;
 
@@ -49,10 +49,10 @@ const HabitItem: React.FC<Props> = ({ habit, isCompleted, onToggle, onRemove }) 
             </View>
 
             <View style={styles.buttonWrapper}>
-                <TouchableOpacity onPress={onRemove} style={styles.deleteButton}>
+                <TouchableOpacity onPress={() => onRemove(habit.id)} style={styles.deleteButton}>
                     <Icon name="trash-o" size={24} color={'#FFFFFF'} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={onToggle} style={styles.toggleButton}>
+                <TouchableOpacity onPress={() => onToggle(habit.id)} style={styles.toggleButton}>
                     {isCompleted ? (
                         <Icon name="check-circle" size={28} color={COLORS.green} />
                     ) : (
@@ -62,7 +62,7 @@ const HabitItem: React.FC<Props> = ({ habit, isCompleted, onToggle, onRemove }) 
             </View>
         </ScaleButton>
     );
-};
+}); // Wrapped in React.memo
 
 const styles = StyleSheet.create({
     container: {

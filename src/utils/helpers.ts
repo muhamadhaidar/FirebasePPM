@@ -12,9 +12,9 @@ export const getTodayString = (): string => {
  * Mengembalikan tanggal kemarin dalam format 'YYYY-MM-DD'
  */
 export const getYesterdayString = (): string => {
-   const yesterday = new Date();
-   yesterday.setDate(yesterday.getDate() - 1);
-   return yesterday.toISOString().split('T')[0];
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  return yesterday.toISOString().split('T')[0];
 }
 
 /**
@@ -24,7 +24,7 @@ export const getYesterdayString = (): string => {
 export const calculateStats = (habits: Habit[]): HabitStats => {
   const today = getTodayString();
   const activeHabits = habits.length;
-  
+
   let completions = 0;
   let todayCompletions = 0;
   let totalStreak = 0;
@@ -34,15 +34,15 @@ export const calculateStats = (habits: Habit[]): HabitStats => {
   habits.forEach(habit => {
     // Tambah semua tanggal selesai ke Set
     habit.completedDates.forEach(date => activeDays.add(date));
-    
+
     // Hitung total penyelesaian
     completions += habit.completedDates.length;
-    
+
     // Hitung penyelesaian hari ini
     if (habit.completedDates.includes(today)) {
       todayCompletions += 1;
     }
-    
+
     // Hitung total & streak terpanjang
     totalStreak += habit.streak;
     if (habit.streak > longestStreak) {
@@ -58,5 +58,6 @@ export const calculateStats = (habits: Habit[]): HabitStats => {
     activeHabits,
     // Cek pembagian dengan nol
     todayProgress: activeHabits > 0 ? todayCompletions / activeHabits : 0,
+    totalCompletedToday: todayCompletions,
   };
 };

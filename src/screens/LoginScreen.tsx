@@ -1,20 +1,26 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert, StatusBar } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert, StatusBar, Image } from 'react-native';
 import { RootStackScreenProps } from '../navigation/types';
 import { COLORS } from '../constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from '@expo/vector-icons/FontAwesome';
 import ScaleButton from '../components/ScaleButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation }: RootStackScreenProps<'Login'>) => {
   const [name, setName] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (name.trim().length === 0) {
       Alert.alert('Error', 'Please enter your name');
       return;
     }
-    navigation.replace('MainApp');
+    try {
+      await AsyncStorage.setItem('userTag', name);
+      navigation.replace('MainApp');
+    } catch (e) {
+      Alert.alert('Error', 'Failed to save login data');
+    }
   };
 
   return (
@@ -28,11 +34,10 @@ const LoginScreen = ({ navigation }: RootStackScreenProps<'Login'>) => {
         <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
         <View style={styles.content}>
 
-          <Icon
-            name="check-circle"
-            size={60}
-            color={COLORS.primary}
-            style={styles.icon}
+          <Image
+            source={require('../../assets/habitflow_logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
           />
 
           <Text style={styles.title}>Welcome back!</Text>
@@ -77,10 +82,13 @@ const LoginScreen = ({ navigation }: RootStackScreenProps<'Login'>) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: 'transparent' },
   content: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
-  icon: {
-    alignSelf: 'center', // Centered icon
+  logo: {
+    alignSelf: 'center',
+    width: 180,
+    height: 180,
+    marginBottom: 0,
   },
-  title: { fontSize: 32, fontWeight: 'bold', color: COLORS.textPrimary, marginTop: 32, marginBottom: 8, textAlign: 'center' },
+  title: { fontSize: 32, fontWeight: 'bold', color: COLORS.textPrimary, marginTop: 12, marginBottom: 8, textAlign: 'center' },
   subtitle: { fontSize: 16, color: COLORS.textSecondary, marginBottom: 48, textAlign: 'center' },
   label: { fontSize: 14, fontWeight: '600', color: COLORS.textSecondary, marginBottom: 8, marginLeft: 4 },
   input: {

@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.cardBackground,
         borderRadius: 16,
         marginBottom: 12,
+        marginHorizontal: 20,
     },
     iconTagWrapper: {
         flexDirection: 'column',

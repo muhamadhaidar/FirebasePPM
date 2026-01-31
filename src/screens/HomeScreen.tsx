@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import { useHabits } from '../contexts/HabitContext';
 import { COLORS } from '../constants/colors';
@@ -10,9 +10,26 @@ import { MainTabScreenProps } from '../navigation/types';
 import { LinearGradient } from 'expo-linear-gradient';
 import ScaleButton from '../components/ScaleButton';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const HomeScreen = ({ navigation }: MainTabScreenProps<'Home'>) => {
   const { habits, stats, loading, addHabit, toggleHabitToday, isHabitCompletedToday, removeHabit } = useHabits();
   const [modalVisible, setModalVisible] = useState(false);
+  const [username, setUsername] = useState('User');
+
+  useEffect(() => {
+    const loadUsername = async () => {
+      try {
+        const storedName = await AsyncStorage.getItem('userTag');
+        if (storedName) {
+          setUsername(storedName);
+        }
+      } catch (e) {
+        // Ignore error
+      }
+    };
+    loadUsername();
+  }, []);
 
   const completedTodayCount = habits.filter(isHabitCompletedToday).length;
 
@@ -21,7 +38,7 @@ const HomeScreen = ({ navigation }: MainTabScreenProps<'Home'>) => {
     <>
       <View style={styles.header}>
         <Text style={styles.headerHello}>Hello,</Text>
-        <Text style={styles.headerName}>S</Text>
+        <Text style={styles.headerName}>{username}</Text>
       </View>
 
       <LinearGradient
@@ -58,7 +75,7 @@ const HomeScreen = ({ navigation }: MainTabScreenProps<'Home'>) => {
         </ScaleButton>
       </View>
     </>
-  ), [completedTodayCount, habits.length, stats.todayProgress]);
+  ), [completedTodayCount, habits.length, stats.todayProgress, username]);
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>

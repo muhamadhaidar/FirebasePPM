@@ -1,6 +1,6 @@
 // src/components/AddHabitModal.tsx
 import React, { useState } from 'react';
-import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert, ScrollView } from 'react-native';
+import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { COLORS } from '../constants/colors';
 import { HabitCategory, NewHabitData } from '../types';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -42,12 +42,19 @@ const AddHabitModal = ({ visible, onClose, onAddHabit }: Props) => {
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
-        <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.overlay}
+      >
+        <TouchableOpacity style={styles.overlayTouchable} onPress={onClose} activeOpacity={1}>
+          {/* Close modal when clicking outside */}
+        </TouchableOpacity>
+
+        <View style={styles.container}>
           <View style={styles.handleBar} />
           <Text style={styles.title}>Add New Habit</Text>
 
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.label}>Habit Name</Text>
             <TextInput
               style={styles.input}
@@ -97,8 +104,8 @@ const AddHabitModal = ({ visible, onClose, onAddHabit }: Props) => {
               </LinearGradient>
             </TouchableOpacity>
           </View>
-        </SafeAreaView>
-      </View>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
@@ -107,7 +114,10 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+  },
+  overlayTouchable: {
+    flex: 1,
   },
   container: {
     backgroundColor: COLORS.cardBackground,
@@ -115,6 +125,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     padding: 24,
     paddingTop: 12,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 24, // Add padding for bottom safe area manually if needed
     maxHeight: '85%',
   },
   handleBar: {
